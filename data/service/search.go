@@ -259,7 +259,13 @@ func (ss *SearchService) SearchData(searchObject *model.SearchObject, aliasData 
 		dataElement.Set(alias.Search(dstIPPort).Data(), "aliasDst")
 		dataElement.Set(table, "table")
 
-		createDate := int64(dataElement.S("timeSeconds").Data().(float64)*1000000 + dataElement.S("timeUseconds").Data().(float64))
+
+		now := time.Now()
+		createDate := now.Unix()
+
+		if dataElement.Exists("timeSeconds") {
+			createDate = int64(dataElement.S("timeSeconds").Data().(float64)*1000000 + dataElement.S("timeUseconds").Data().(float64))
+		}
 
 		dataElement.Set(createDate/1000, "create_date")
 		if err := dataReply.ArrayAppend(dataElement.Data()); err != nil {
