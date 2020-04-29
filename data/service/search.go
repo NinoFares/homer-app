@@ -214,6 +214,7 @@ func (ss *SearchService) SearchData(searchObject *model.SearchObject, aliasData 
 		}
 
 		srcPort, dstPort := "0", "0"
+		srcIP, dstIP := "0.0.0.0","0.0.0.0"
 
 		if dataElement.Exists("srcPort") {
 			srcPort = strconv.FormatFloat(dataElement.S("srcPort").Data().(float64), 'f', 0, 64)
@@ -223,10 +224,19 @@ func (ss *SearchService) SearchData(searchObject *model.SearchObject, aliasData 
 			dstPort = strconv.FormatFloat(dataElement.S("dstPort").Data().(float64), 'f', 0, 64)
 		}
 
-		srcIPPort := dataElement.S("srcIp").Data().(string) + ":" + srcPort
-		dstIPPort := dataElement.S("dstIp").Data().(string) + ":" + dstPort
-		srcIPPortZero := dataElement.S("srcIp").Data().(string) + ":" + "0"
-		dstIPPortZero := dataElement.S("dstIp").Data().(string) + ":" + "0"
+		if dataElement.Exists("srcIp") {
+        srcIP = dataElement.S("srcIp").Data().(string)
+    }
+
+    if dataElement.Exists("dstIp") {
+        dstIP = dataElement.S("dstIp").Data().(string)
+    }
+
+
+		srcIPPort := srcIP + ":" + srcPort
+		dstIPPort := dstIP + ":" + dstPort
+		srcIPPortZero := srcIP + ":" + "0"
+		dstIPPortZero := dstIP + ":" + "0"
 
 		if _, ok := aliasData[srcIPPort]; ok {
 			alias.Set(srcIPPort, aliasData[srcIPPort])
